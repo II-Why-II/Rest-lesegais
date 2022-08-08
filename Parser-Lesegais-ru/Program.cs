@@ -10,8 +10,16 @@ namespace Parser_Lesegais_ru
     {
         static void Main(string[] args)
         {
-            Parser.Worker worker = new Parser.Worker();
-            worker.Program();
+            try
+            {
+                Parser.Worker worker = new Parser.Worker();
+                worker.Program();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("error in main: " + ex.Message);
+                throw;
+            }
         }
     }
 }

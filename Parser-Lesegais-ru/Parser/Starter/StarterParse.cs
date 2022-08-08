@@ -26,7 +26,7 @@ namespace Parser_Lesegais_ru.Parser.Starter
                     try
                     {
                         //MakeQuery.WebClient.SendDataViaWebClient webClient = new MakeQuery.WebClient.SendDataViaWebClient();
-                        //TheSearchReportWoodDeal.Content[] contentByWebClient = webClient.getWoodDealContentsOrNull(page, sizeOneRequest);
+                        //TheSearchReportWoodDeal.Content[] contentByWebClient = webClient.getWoodDealContents(page, sizeOneRequest);
                         //_ = 1;
 
                         //MakeQuery.GraphQl.Request request = new MakeQuery.GraphQl.Request();
@@ -34,7 +34,7 @@ namespace Parser_Lesegais_ru.Parser.Starter
                         //_ = 1;
 
                         MakeQuery.HttpRequests.SendRequestWithHttpWebRequest httpWebRequest = new MakeQuery.HttpRequests.SendRequestWithHttpWebRequest();
-                        TheSearchReportWoodDeal.Content[] contentByHttpWebRequest = httpWebRequest.getWoodDealContentsOrNull(page, sizeOneRequest);
+                        TheSearchReportWoodDeal.Content[] contentByHttpWebRequest = httpWebRequest.getWoodDealContents(page, sizeOneRequest);
                         _ = 1;
 
                         sqlite.OpenConnection();
@@ -44,23 +44,25 @@ namespace Parser_Lesegais_ru.Parser.Starter
                         {
                             try
                             {
-                                bool? existenceValueInSqliteTable = sqlite.ExistenceInTableOrNull(reportWoodDeal);
+                                bool existenceValueInSqliteTable = sqlite.ExistenceInTable(reportWoodDeal);
                                 if (existenceValueInSqliteTable == false)
                                     sqlite.AddWoodDealToTable(reportWoodDeal);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine("Error check existence or adding to sqlite:" + ex.Message);
+                                throw;
                             }
                             try
                             {
-                                bool? existenceValueInSqlTable = mssql.ExistenceInTableOrNull(reportWoodDeal);
+                                bool existenceValueInSqlTable = mssql.ExistenceInTable(reportWoodDeal);
                                 if (existenceValueInSqlTable == false)
                                     mssql.AddWoodDealToTable(reportWoodDeal);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine("Error check existence or adding to sql server:" + ex.Message);
+                                throw;
                             }
                             _ = 1;
                         }
@@ -68,14 +70,13 @@ namespace Parser_Lesegais_ru.Parser.Starter
                         sqlite.GetDataFromDBToConsole();
                         mssql.GetDataFromDBToConsole();
 
-                        var cachOfMaxPage = httpWebRequest.GetMaxPageOrNull(sizeOneRequest);
-                        if (cachOfMaxPage != null)
-                            maxPage = cachOfMaxPage;
-
+                        maxPage = httpWebRequest.GetMaxPage(sizeOneRequest);
+                        
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
+                        throw;
                     }
                     finally
                     {
@@ -90,6 +91,7 @@ namespace Parser_Lesegais_ru.Parser.Starter
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
             finally
             {

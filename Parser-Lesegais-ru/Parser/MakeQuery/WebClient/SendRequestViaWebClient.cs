@@ -11,24 +11,20 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.WebClient
 {
     class SendRequestViaWebClient
     {
-        public TheSearchReportWoodDeal.Content[] getWoodDealContentsOrNull(int page, int sizeOneRequest)
+        public TheSearchReportWoodDeal.Content[] getWoodDealContents(int page, int sizeOneRequest)
         {
             try
             {
                 string responseString = GetStringByMakeResponce(page, sizeOneRequest);
-                if (responseString != null)
-                {
-                    var data = TheSearchReportWoodDeal.Welcome.FromJson(responseString);
+                var data = TheSearchReportWoodDeal.Welcome.FromJson(responseString);
 
-                    return data.Data.SearchReportWoodDeal.Content;
-                }
-                else
-                    return null;
+                return data.Data.SearchReportWoodDeal.Content;
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                throw;
             }
         }
         private string GetStringByMakeResponce(int numberOfPage, int sizeOfRequest)
@@ -39,32 +35,40 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.WebClient
 
         private string SendRequestAndReturnResult(string url, string postData)
         {
-            using (CreateWebClientWithHeaders webClient = new CreateWebClientWithHeaders())
+            try
             {
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;// | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-                ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
-                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AlwaysGoodCertificate);
+                using (CreateWebClientWithHeaders webClient = new CreateWebClientWithHeaders())
+                {
+                    ServicePointManager.Expect100Continue = true;
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;// | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+                    ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
+                    ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AlwaysGoodCertificate);
 
 
-                webClient.Headers.Add("Accept", "application/json"); //"*/*";
-                webClient.Headers.Add("ContentType", "application/json"); //"application/x-www-form-urlencoded"; //
-                webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36");
-                webClient.Headers.Add("Origin", "chrome-extension://flnheeellpciglgpaodhkhmapeljopja");
-                webClient.Headers.Add("Sec-Fetch-Site", "none"); //"same-origin"
-                webClient.Headers.Add("Sec-Fetch-Mode", "cors");
-                webClient.Headers.Add("Sec-Fetch-Dest", "empty");
-                webClient.Headers.Add("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
-                webClient.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, Deflate";
-                
+                    webClient.Headers.Add("Accept", "application/json"); //"*/*";
+                    webClient.Headers.Add("ContentType", "application/json"); //"application/x-www-form-urlencoded"; //
+                    webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36");
+                    webClient.Headers.Add("Origin", "chrome-extension://flnheeellpciglgpaodhkhmapeljopja");
+                    webClient.Headers.Add("Sec-Fetch-Site", "none"); //"same-origin"
+                    webClient.Headers.Add("Sec-Fetch-Mode", "cors");
+                    webClient.Headers.Add("Sec-Fetch-Dest", "empty");
+                    webClient.Headers.Add("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7");
+                    webClient.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, Deflate";
 
-                var responce = webClient.UploadString(url, "POST", postData);
-                var result = responceDecoder(responce);
 
-                _ = 1;
-                webClient.Dispose();
+                    var responce = webClient.UploadString(url, "POST", postData);
+                    var result = responceDecoder(responce);
 
-                return result;
+                    _ = 1;
+                    webClient.Dispose();
+
+                    return result;
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("error send webclient request: " + ex.Message);
+                throw;
             }
         }
         private static string responceDecoder(string text)

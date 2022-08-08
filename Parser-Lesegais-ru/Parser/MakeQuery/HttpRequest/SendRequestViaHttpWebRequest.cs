@@ -12,11 +12,11 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.HttpRequests
 {
     class SendRequestWithHttpWebRequest
     {
-        public TheSearchReportWoodDeal.Content[] getWoodDealContentsOrNull(int page, int sizeOneRequest)
+        public TheSearchReportWoodDeal.Content[] getWoodDealContents(int page, int sizeOneRequest)
         {
             try
             {
-                string responseString = GetWoodDealStringsOrNull(page, sizeOneRequest);
+                string responseString = GetWoodDealStrings(page, sizeOneRequest);
                 if (responseString != null)
                 {
                     var data = TheSearchReportWoodDeal.Welcome.FromJson(responseString);
@@ -24,59 +24,58 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.HttpRequests
                     return data.Data.SearchReportWoodDeal.Content;
                 }
                 else
-                    return null;
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                throw;
             }
         }
 
-        public int? GetMaxPageOrNull(int sizeOneRequest)
+        public int? GetMaxPage(int sizeOneRequest)
         {
             try
             {
-                var woodDealCounterString = GetWoodDealCounterStringOrNull(sizeOneRequest);
-                if (woodDealCounterString != null)
-                {
-                    var counterData = TheRearchReportWoodDealCounter.Welcome.FromJson(woodDealCounterString);
+                var woodDealCounterString = GetWoodDealCounterString(sizeOneRequest);
 
-                    var counterOfPages = counterData.Data.SearchReportWoodDeal.Total / sizeOneRequest;
+                var counterData = TheRearchReportWoodDealCounter.Welcome.FromJson(woodDealCounterString);
 
-                    var result = Convert.ToInt32(counterOfPages.ToString().Split(',').First());
+                var counterOfPages = counterData.Data.SearchReportWoodDeal.Total / sizeOneRequest;
 
-                    var r = counterData.Data.SearchReportWoodDeal.Total % sizeOneRequest;
+                var result = Convert.ToInt32(counterOfPages.ToString().Split(',').First());
 
-                    _ = 1;
-                    if (r != 0)
-                        return result + 1;
-                    else
-                        return result;
-                }
+                var r = counterData.Data.SearchReportWoodDeal.Total % sizeOneRequest;
+
+                _ = 1;
+                if (r != 0)
+                    return result + 1;
                 else
-                    return null;
+                    return result;
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return null;
+                throw;
             }
 
         }
 
-        private string GetWoodDealStringsOrNull(int numberOfPage, int size)
+        private string GetWoodDealStrings(int numberOfPage, int size)
         {
             var postDataAboutWoodDeal = "{\"query\":\"\\n{\\n    searchReportWoodDeal(filter: null, pageable: {" + $"number: {numberOfPage}, size: {size}" + "}, orders: null)\\n      {\\n        content \\n        {\\n          sellerName\\n          sellerInn\\n          buyerName\\n          buyerInn\\n          woodVolumeBuyer\\n          woodVolumeSeller\\n          dealDate\\n          dealNumber\\n          __typename\\n        }\\n        __typename\\n      }\\n}\",\"variables\":{},\"operationName\":null}";
-            return getResponseStringOrNull(postDataAboutWoodDeal);
+            return getResponseString(postDataAboutWoodDeal);
         }
-        private string GetWoodDealCounterStringOrNull(int size)
+        private string GetWoodDealCounterString(int size)
         {
             var postDataAboutWoodDealCounter = "{\"query\":\"query SearchReportWoodDealCount($size: Int!, $number: Int!, $filter: Filter, $orders: [Order!]) {\\n  searchReportWoodDeal(filter: $filter, pageable: {number: $number, size: $size}, orders: $orders) {\\n    total\\n    number\\n    size\\n    overallBuyerVolume\\n    overallSellerVolume\\n    __typename\\n  }\\n}\\n\",\"variables\":{\"size\":" + $"{size}" + ",\"number\":0,\"filter\":null},\"operationName\":\"SearchReportWoodDealCount\"}";
-            return getResponseStringOrNull(postDataAboutWoodDealCounter);
+            return getResponseString(postDataAboutWoodDealCounter);
         }
 
-        private string getResponseStringOrNull(string postData)
+        private string getResponseString(string postData)
         {
             try
             {
@@ -119,7 +118,7 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.HttpRequests
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return null;
+                throw;
             }
         }
         private bool AcceptAllCertifications(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certification, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)

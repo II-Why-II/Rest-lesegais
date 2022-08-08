@@ -12,15 +12,23 @@ namespace Parser_Lesegais_ru.Parser
         public int TimeSpanInMinutes = 10;
         public void Program()
         {
-            bool needWork = true;
-            while (needWork)
+            try
             {
-                Starter.StarterParse starter = new Starter.StarterParse();
-                starter.BigParseInfo();
+                bool needWork = true;
+                while (needWork)
+                {
+                    Starter.StarterParse starter = new Starter.StarterParse();
+                    starter.BigParseInfo();
 
-                int timeSpanInMilliseconds = TimeSpanInMinutes * 60 * 1000;
+                    int timeSpanInMilliseconds = TimeSpanInMinutes * 60 * 1000;
 
-                Thread.Sleep(timeSpanInMilliseconds);
+                    Thread.Sleep(timeSpanInMilliseconds);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("error in loop: " + ex.Message);
+                throw;
             }
         }
     }

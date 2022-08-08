@@ -17,6 +17,7 @@ namespace Parser_Lesegais_ru.DataBase
             catch(Exception ex)
             {
                 Console.WriteLine("MS SQL error: " + ex.Message);
+                throw;
             }
         }
     
@@ -29,6 +30,7 @@ namespace Parser_Lesegais_ru.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
         }
         public void CloseConnection()
@@ -40,6 +42,7 @@ namespace Parser_Lesegais_ru.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
         }
 
@@ -79,6 +82,7 @@ namespace Parser_Lesegais_ru.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
         }
         public void AddWoodDealToTable(TheSearchReportWoodDeal.Content woodDealModel)
@@ -96,6 +100,7 @@ namespace Parser_Lesegais_ru.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
         }
         public void GetDataFromDBToConsole()
@@ -124,9 +129,10 @@ namespace Parser_Lesegais_ru.DataBase
             catch (Exception ex)
             {
                 Console.WriteLine("Error get data from db:" + ex.Message);
+                throw;
             }
         }
-        public bool? ExistenceInTableOrNull(TheSearchReportWoodDeal.Content woodDealModel)
+        public bool ExistenceInTable(TheSearchReportWoodDeal.Content woodDealModel)
         {
             try
             {
@@ -138,15 +144,20 @@ namespace Parser_Lesegais_ru.DataBase
                     WHERE DealNumber='" + woodDealModel.DealNumber + "'";
 
                 int count = Convert.ToInt32(queryCommand.ExecuteScalar());
+
                 if (count == 0)
+                {
                     return false;
+                }
                 else
+                {
                     return true;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                throw;
             }
         }
     }

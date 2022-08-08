@@ -7,7 +7,7 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.GraphQl
 {
     class SendRequestViaGraphQL
     {
-        public TheSearchReportWoodDeal.Content[] GetContent(int sizeOfPage, int sizeOfQuery) => MakeRequestAndGetContentOrNull(sizeOfPage, sizeOfQuery).Result;
+        public TheSearchReportWoodDeal.Content[] GetContent(int sizeOfPage, int sizeOfQuery) => MakeRequestAndGetContent(sizeOfPage, sizeOfQuery).Result;
 
         private GraphQLRequest GraphQuery(int numberOfPage, int sizeOfRequest)
         {
@@ -34,7 +34,7 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.GraphQl
             };
             return querySearchReportWoodDeal;
         }
-        private async Task<TheSearchReportWoodDeal.Content[]> MakeRequestAndGetContentOrNull(int sizeOfPage, int sizeOfQuery)
+        private async Task<TheSearchReportWoodDeal.Content[]> MakeRequestAndGetContent(int sizeOfPage, int sizeOfQuery)
         {
             try
             {
@@ -62,9 +62,9 @@ namespace Parser_Lesegais_ru.Parser.MakeQuery.GraphQl
             }
             catch (Exception ex) 
             {
-                Console.WriteLine(ex); 
+                Console.WriteLine(ex);
+                throw;
             }
-            return null;
         }
     }
 }
